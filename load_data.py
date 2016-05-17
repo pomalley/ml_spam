@@ -4,6 +4,7 @@
 import os
 import random
 import tarfile
+import urllib
 
 this_dir = os.path.split(os.path.realpath(__file__))[0]
 spam_path = os.path.join(this_dir, 'data', 'spam')
@@ -11,6 +12,25 @@ ham_path = os.path.join(this_dir, 'data', 'ham')
 spamassassin_spams = ['20021010_spam.tar.bz2', '20030228_spam.tar.bz2', '20030228_spam_2.tar.bz2']
 spamassassin_hams = ['20021010_easy_ham.tar.bz2', '20021010_hard_ham.tar.bz2', '20030228_easy_ham.tar.bz2',
                      '20030228_easy_ham_2.tar.bz2', '20030228_hard_ham.tar.bz2']
+spamassassin_url = 'http://spamassassin.apache.org/publiccorpus/'
+
+
+def check_and_download():
+    """Check for existence of SpamAssassin data and download it if missing."""
+    if not os.path.exists(spam_path):
+        os.makedirs(spam_path)
+    if not os.path.exists(ham_path):
+        os.makedirs(ham_path)
+    for spamfile in spamassassin_spams:
+        path = os.path.join(spam_path, spamfile)
+        if not os.path.exists(path):
+            print "Downloading {}".format(spamfile)
+            urllib.urlretrieve(spamassassin_url+spamfile, path)
+    for hamfile in spamassassin_hams:
+        path = os.path.join(ham_path, hamfile)
+        if not os.path.exists(path):
+            print "Downloading {}".format(hamfile)
+            urllib.urlretrieve(spamassassin_url + hamfile, path)
 
 
 def load_spamassassin_tbz(filename, max_emails=0):

@@ -8,7 +8,7 @@ import numpy as np
 from . import load_data, preprocess, features, svm
 
 
-def prep_data(mode='symmetric difference'):
+def prep_data(mode='symmetric difference', check_and_download=True):
     """Load the SpamAssassin data, preprocess it, generate features, and split into sets; return X and y data.
 
     The X data are (m x n) matrices of stacked feature vectors, the y data are m-long vectors with 1=spam, 0=ham.
@@ -18,11 +18,14 @@ def prep_data(mode='symmetric difference'):
 
     Args:
         mode (str): method for generating feature words. See features.make_feature_dict.
+        check_and_download (bool): if True, run load_data.check_and_download()
 
     Returns:
         x_train, y_train, x_cv, y_cv, x_test, y_test
 
     """
+    if check_and_download:
+        load_data.check_and_download()
     t = time.time()
     logging.info("Loading SpamAssassin data")
     spams, hams = load_data.load_all_spamassassin()
