@@ -6,6 +6,10 @@ The training data are from the [SpamAssassin public corpus](http://spamassassin.
 
 It took a long-ish afternoon to put together the data prep and a short-ish morning to run it through the SVM, and we get an error rate of ~15%--so there's plenty of room for improvement. This speaks to the power of SVM's and the ease with which one can use the scikit-learn API more than anything else.
 
+## Usage
+
+To get off the ground, clone the repo and run `python -m ml_spam.main` from the directory one-up from the cloned directory. This will download the training data, process it, and run it through the SVM. 
+
 ## Dependencies
 * [scikit-learn](http://scikit-learn.org/stable/index.html) for the actual machine learning stuff
 * [nltk](http://www.nltk.org/) -- Natural Language Toolkit -- used the Snowball word stemmer from this library (also very easy to use)
