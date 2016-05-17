@@ -84,3 +84,25 @@ def featurize(word_list, feature_dict):
         if w in feature_dict:
             v[feature_dict[w]] = 1
     return v
+
+
+def make_arrays(spams, hams):
+    """Stack together all the feature vectors into an m x n matrix (m = # samples, n = # features); also get y array.
+
+    The "y array" is the label array (0 for ham, 1 for spam).
+    Current implementation puts all the spams first, then the hams.
+
+    Args:
+        spams (iterable[np.ndarray]): list of spam feature vectors
+        hams (iterable(np.ndarray]): list of ham feature vectors
+
+    Returns:
+        np.ndarray, np.ndarray: X matrix (m x n), y array (m)
+    """
+    m = len(spams) + len(hams)  # number of samples
+    n = len(spams[0])           # number of features
+    arr = np.zeros((m, n))
+    for i, v in enumerate(spams + hams):
+        arr[i, :] = v
+    y = np.hstack((np.ones(len(spams)), np.zeros(len(hams))))
+    return arr, y
