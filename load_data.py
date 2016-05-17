@@ -2,6 +2,7 @@
 
 """
 import os
+import random
 import tarfile
 
 spam_path = os.path.join('data', 'spam')
@@ -47,3 +48,36 @@ def load_all_spamassassin():
     for ham_file in spamassassin_hams:
         hams.extend(load_spamassassin_tbz(os.path.join(ham_path, ham_file)))
     return spams, hams
+
+
+def make_sets(spams, hams, train=0.6, cv=0.2):
+    """Divide up the spams and the hams into train, cross-validation, and test sets.
+
+    Args:
+        spams (iterable): list of spam data
+        hams (iterable): list of ham data
+        train (float): fraction of data to put into training set
+        cv (float): fraction of data to put into cross-validation set. remainder goes into test set.
+
+    Returns:
+        (iterable, iterable, iterable, iterable, iterable, iterable):
+            spam_train, ham_train, spam_cv, ham_cv, spam_test, ham_test
+    """
+    spam_train, ham_train, spam_cv, ham_cv, spam_test, ham_test = [], [], [], [], [], []
+    for s in spams:
+        v = random.random()
+        if v <= train:
+            spam_train.append(s)
+        elif v <= train + cv:
+            spam_cv.append(s)
+        else:
+            spam_test.append(s)
+    for h in hams:
+        v = random.random()
+        if v <= train:
+            ham_train.append(h)
+        elif v <= train + cv:
+            ham_cv.append(h)
+        else:
+            ham_test.append(h)
+    return spam_train, ham_train, spam_cv, ham_cv, spam_test, ham_test
