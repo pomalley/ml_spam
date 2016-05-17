@@ -1,5 +1,10 @@
 """preprocess.py -- functions to pre-process an email.
 
+TODOs:
+* strip the header, or use it somehow
+* use real HTML recognition
+* use a real url finder
+
 """
 from __future__ import absolute_import
 import re
@@ -10,8 +15,8 @@ stemmer = EnglishStemmer()
 # compile regexes on module import. I know Python caches "the most recent patterns" but I don't know how many that is.
 regexes = {
     'email': re.compile(r'<?[^@\s]+?@[^@\s]+?\.[^@\s]+>?'),
-    'html': re.compile(r'<[^<]*?>'),  # TODO: use real HTML recognition
-    'url': re.compile(r'(http|https)://[^\s]*'),  # TODO: use a real url finder
+    'html': re.compile(r'<[^<]*?>'),
+    'url': re.compile(r'(http|https)://[^\s]*'),
     'number': re.compile(r'\d+'),
     'dollar': re.compile(r'\$+'),
     'clean': re.compile(r'[^\w\s]+'),
@@ -36,7 +41,7 @@ def make_word_list(email):
     Returns:
         list[unicode]: list of words.
     """
-    return stem(to_list(clean(normalize(lower(email)))))
+    return stem(to_list(clean(normalize(lower(strip_header(email))))))
 
 
 def lower(email):
@@ -75,7 +80,7 @@ def stem(words):
     Returns:
         unicode: the stemmed word list
     """
-    return [stemmer.stem(word) for word in words]
+    return [stemmer.stem(word) for word in words if word]
 
 
 def clean(email):
@@ -102,3 +107,16 @@ def to_list(email):
         list[unicode]: list of words
     """
     return email.split(' ')
+
+
+def strip_header(email):
+    """Remove the header by dropping all lines before the first empty line.
+
+    Args:
+        email (unicode): the email
+
+    Returns:
+        unicode: email with header removed
+    """
+    email = email.partition('\n\n')[-1]
+    return email
