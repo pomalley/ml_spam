@@ -4,8 +4,9 @@ import logging
 import time
 
 import numpy as np
+from sklearn import svm
 
-from . import load_data, preprocess, features, svm
+from . import load_data, preprocess, features, learning_curves, metrics
 
 
 def prep_data(mode='symmetric difference', check_and_download=True):
@@ -59,7 +60,8 @@ def prep_data(mode='symmetric difference', check_and_download=True):
 def use_svm(x_train, y_train, x_cv, y_cv, x_test, y_test):
     t = time.time()
     logging.info("Training SVM classifier")
-    clf = svm.train(x_train, y_train)
+    clf = svm.SVC()
+    clf.fit(x_train, y_train)
     t = _log_time(t)
     logging.info("Predicting CV set")
     pred_cv = clf.predict(x_cv)
@@ -72,6 +74,13 @@ def use_svm(x_train, y_train, x_cv, y_cv, x_test, y_test):
     return clf
 
 
+def svc_learning_curves(x_train, y_train, x_cv, y_cv):
+    svc = svm.SVC()
+    ms, f1_train, f1_cv = learning_curves.make_learning_curve(x_train, y_train, x_cv, y_cv, svc, metrics.f1,
+                                                              n_points=10)
+    learning_curves.plot_learning_curve(ms, f1_train, f1_cv, 'F1-score')
+
+
 def _log_time(t):
     logging.info("\t{:.4f} s".format(time.time() - t))
     return time.time()
@@ -81,4 +90,4 @@ if __name__ == '__main__':
     logging.getLogger().setLevel(logging.INFO)
     stuff = prep_data()
     print
-    use_svm(*stuff)
+    svc_learning_curves(*stuff[:4])
