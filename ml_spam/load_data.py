@@ -6,9 +6,9 @@ import random
 import tarfile
 import urllib
 
-this_dir = os.path.split(os.path.realpath(__file__))[0]
-spam_path = os.path.join(this_dir, 'data', 'spam')
-ham_path = os.path.join(this_dir, 'data', 'ham')
+data_dir = os.path.join(os.path.dirname(os.path.split(os.path.realpath(__file__))[0]), 'data')
+spam_path = os.path.join(data_dir, 'spam')
+ham_path = os.path.join(data_dir, 'ham')
 spamassassin_spams = ['20021010_spam.tar.bz2', '20030228_spam.tar.bz2', '20030228_spam_2.tar.bz2']
 spamassassin_hams = ['20021010_easy_ham.tar.bz2', '20021010_hard_ham.tar.bz2', '20030228_easy_ham.tar.bz2',
                      '20030228_easy_ham_2.tar.bz2', '20030228_hard_ham.tar.bz2']
